@@ -24,7 +24,18 @@ foreach($slide in $presentation.Slides) {
     ("-> " + $slide.Name) | out-host
     '<div class="step slide" data-x="' + $xPos + '" data-y="' + $yPos + '">' | out-file $outFile -Append
     foreach($shape in $slide.Shapes) {
-        ('<p>' + $shape.TextFrame.TextRange.Text + '</p>') | out-file $outFile -Append
+        foreach($p in $shape.TextFrame2.TextRange.Paragraphs()) {
+            if($p.Text.Trim()) {
+                if($p.ParagraphFormat.Bullet.Visible) {
+                    ('<li>' + $p.Text + '</li>') | out-file $outFile -Append
+                } else {
+                    ('<p>' + $p.Text + '</p>') | out-file $outFile -Append
+                } 
+            }
+            else {
+                '<p>&nbsp;</p>' | out-file $outFile -Append
+            }
+        }
     }
     '</div>' | out-file $outFile -Append
     $xPos += $width
