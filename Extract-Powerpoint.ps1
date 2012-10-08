@@ -3,8 +3,13 @@ $outFile = ".\Software Engineering 1 - 01 - OOP Basics.html"
 
 $xPos = 0
 $yPos = 0
-$width = 1000
-$height = 800
+$zPos = 0
+
+$width = 1024
+$height = 768
+$gap = 100
+$zGap = -50
+
 $colCount = 5
 $col = 0
 
@@ -22,35 +27,37 @@ $presentation = $app.Presentations.open($file)
 
 foreach($slide in $presentation.Slides) {
     ("-> " + $slide.Name) | out-host
-    '<div class="step slide" data-x="' + $xPos + '" data-y="' + $yPos + '">' | out-file $outFile -Append
+    '<!-- ' + $slide.Name + ' -->' | out-file $outFile -Append
+    '<div class="step slide" data-x="' + $xPos + '" data-y="' + $yPos + '" data-z="' + $zPos + '">' | out-file $outFile -Append
     foreach($shape in $slide.Shapes) {
         if($shape.HasTextFrame) {
-            '<div style="position: absolute;top: ' + $shape.Top + 'px;left:' + $shape.Left + 'px">' | out-file $outFile -Append
+            '    <div style="position: absolute;top: ' + $shape.Top + 'px;left:' + $shape.Left + 'px">' | out-file $outFile -Append
             foreach($p in $shape.TextFrame2.TextRange.Paragraphs()) {
                 $fontStyle = 'font-size: ' + $p.Font.Size + 'pt'
                 if($p.Text -and $p.Text.Trim()) {
                     if($p.ParagraphFormat.Bullet.Visible) {
                         $margin = ($p.ParagraphFormat.IndentLevel - 1) * 20
-                        ('<li style="margin-left:' + $margin + 'px;' + $fontStyle + '">' + $p.Text + '</li>') | out-file $outFile -Append
+                        ('        <li style="margin-left:' + $margin + 'px;' + $fontStyle + '">' + $p.Text + '</li>') | out-file $outFile -Append
                     } else {
-                        ('<p style="' + $fontStyle + '">' + $p.Text + '</p>') | out-file $outFile -Append
+                        ('        <p style="' + $fontStyle + '">' + $p.Text.TrimEnd() + '</p>') | out-file $outFile -Append
                     } 
                 }
                 else {
-                    '<p style="' + $fontStyle + '">&nbsp;</p>' | out-file $outFile -Append
+                    '        <p style="' + $fontStyle + '">&nbsp;</p>' | out-file $outFile -Append
                 }
             }
-            '</div>' | out-file $outFile -Append
+            '    </div>' | out-file $outFile -Append
         }
     }
     '</div>' | out-file $outFile -Append
-    $xPos += $width
+    $xPos += $width + $gap
+    $zPos += $zGap
     $col++
     
     if($col -ge $colCount) {
         $xPos = 0
         $col = 0
-        $yPos += $height
+        $yPos += $height + $gap
     }
 }
 
