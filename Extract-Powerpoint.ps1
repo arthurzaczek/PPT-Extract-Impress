@@ -24,17 +24,23 @@ foreach($slide in $presentation.Slides) {
     ("-> " + $slide.Name) | out-host
     '<div class="step slide" data-x="' + $xPos + '" data-y="' + $yPos + '">' | out-file $outFile -Append
     foreach($shape in $slide.Shapes) {
-        foreach($p in $shape.TextFrame2.TextRange.Paragraphs()) {
-            if($p.Text.Trim()) {
-                if($p.ParagraphFormat.Bullet.Visible) {
-                    ('<li>' + $p.Text + '</li>') | out-file $outFile -Append
-                } else {
-                    ('<p>' + $p.Text + '</p>') | out-file $outFile -Append
-                } 
+        if($shape.HasTextFrame) {
+            '<div style="position: absolute;top: ' + $shape.Top + 'px;left:' + $shape.Left + 'px">' | out-file $outFile -Append
+            foreach($p in $shape.TextFrame2.TextRange.Paragraphs()) {
+                $fontStyle = 'font-size: ' + $p.Font.Size + 'pt'
+                if($p.Text -and $p.Text.Trim()) {
+                    if($p.ParagraphFormat.Bullet.Visible) {
+                        $margin = ($p.ParagraphFormat.IndentLevel - 1) * 20
+                        ('<li style="margin-left:' + $margin + 'px;' + $fontStyle + '">' + $p.Text + '</li>') | out-file $outFile -Append
+                    } else {
+                        ('<p style="' + $fontStyle + '">' + $p.Text + '</p>') | out-file $outFile -Append
+                    } 
+                }
+                else {
+                    '<p style="' + $fontStyle + '">&nbsp;</p>' | out-file $outFile -Append
+                }
             }
-            else {
-                '<p>&nbsp;</p>' | out-file $outFile -Append
-            }
+            '</div>' | out-file $outFile -Append
         }
     }
     '</div>' | out-file $outFile -Append
