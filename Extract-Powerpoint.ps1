@@ -32,7 +32,7 @@ foreach($slide in $presentation.Slides) {
     '<div class="step slide ' + $slide.CustomLayout.Name.Replace(" ", "-") + '" data-x="' + $xPos + '" data-y="' + $yPos + '" data-z="' + $zPos + '">' | out-file $outFile -Append
     foreach($shape in $slide.Shapes) {
         if($shape.HasTextFrame) {
-            '    <div style="position: absolute;top: ' + $shape.Top + 'px;left:' + $shape.Left + 'px">' | out-file $outFile -Append
+            '    <div style="position: absolute;top:' + $shape.Top + 'px;left:' + $shape.Left + 'px" class="' + $shape.Name.Replace(" ", "-") + '">' | out-file $outFile -Append
             foreach($p in $shape.TextFrame2.TextRange.Paragraphs()) {
                 $fontStyle = 'font-size: ' + $p.Font.Size + 'pt'
                 if($p.Text -and $p.Text.Trim()) {
