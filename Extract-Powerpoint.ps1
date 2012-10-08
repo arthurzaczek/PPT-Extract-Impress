@@ -1,4 +1,4 @@
-$file = "p:\impress\Software Engineering 1 - 01 - OOP Basics.pptx"
+$file = "P:\Impress-Extract-Powerpoint\Software Engineering 1 - 01 - OOP Basics.pptx"
 $outFile = ".\Software Engineering 1 - 01 - OOP Basics.html"
 
 $xPos = 0
@@ -17,6 +17,7 @@ $col = 0
 '<!doctype html>' | out-file $outFile
 '<html>' | out-file $outFile -Append
 '<link href="content/impress.css" rel="stylesheet" />' | out-file $outFile -Append
+'<link href="content/ppt.css" rel="stylesheet" />' | out-file $outFile -Append
 '<body class="impress-not-supported">' | out-file $outFile -Append
 '<div id="impress">' | out-file $outFile -Append
 
@@ -28,7 +29,7 @@ $presentation = $app.Presentations.open($file)
 foreach($slide in $presentation.Slides) {
     ("-> " + $slide.Name) | out-host
     '<!-- ' + $slide.Name + ' -->' | out-file $outFile -Append
-    '<div class="step slide" data-x="' + $xPos + '" data-y="' + $yPos + '" data-z="' + $zPos + '">' | out-file $outFile -Append
+    '<div class="step slide ' + $slide.CustomLayout.Name.Replace(" ", "-") + '" data-x="' + $xPos + '" data-y="' + $yPos + '" data-z="' + $zPos + '">' | out-file $outFile -Append
     foreach($shape in $slide.Shapes) {
         if($shape.HasTextFrame) {
             '    <div style="position: absolute;top: ' + $shape.Top + 'px;left:' + $shape.Left + 'px">' | out-file $outFile -Append
