@@ -5,7 +5,7 @@
     Extracts power point slides to impress js using powershell
 .EXAMPLE
 	.\Extract-Powerpoint.ps1 'MyPresentation.pptx'
-	ls *.pptx | foreach { .\Extract-Powerpoint.ps1 $_ }
+	ls *.pptx | % { .\Extract-Powerpoint.ps1 $_ }
 .NOTES 
     Author     : Arthur Zaczek, arthur@dasz.at
 	License    : GNU General Public License (GPL)
@@ -20,8 +20,11 @@ param(
 	[Parameter(HelpMessage="Simple mode. Extract only shapes with no formating")]
 	[switch]$Simple,
 
-	[Parameter(HelpMessage="Simple mode. Extract only shapes with no formating")]
+	[Parameter(HelpMessage="Extract position of shapes")]
 	[switch]$Position,
+
+	[Parameter(HelpMessage="Extract font style")]
+	[switch]$FontStyle,
 	
 	[Parameter(HelpMessage="Open the result when finished")]
 	[switch]$Open
@@ -35,6 +38,7 @@ if(!$file) {
 if(!$Simple) {
 # full style
 	$Position = $true
+	$FontStyle = $true
 }
 
 # ---------------- Init variables ------------------------------
@@ -58,6 +62,13 @@ function nameToClass($name) {
 	return $name.Replace(" ", "-")
 }
 
+function getStyleAttribute([string[]]$styles) {
+	if(!$styles) { return '' }
+	if($styles.length -eq 0) { return '' }
+	
+	return ' style="' + [string]::join(';', $styles) + '"'
+}
+
 # ---------------- render functions ------------------------------
 function renderHeader() {
 	'<!doctype html>' | out-file $outFile
@@ -78,23 +89,31 @@ function renderFooter() {
 }
 
 function renderTextShape($shape) {
-	$strStyle = ""
+	$styles = @()
 	if($Position) {
-		$strStyle = 'style="position: absolute;top:' + $shape.Top + 'px;left:' + $shape.Left + 'px"'
+		$styles += ('position: absolute')
+        $styles += ('top:' + $shape.Top + 'px')
+        $styles += ('left:' + $shape.Left + 'px')
 	}
-	'    <div ' + $strStyle + '" class="' + (nameToClass $shape.Name) + '">' | out-file $outFile -Append
+	'    <div' + (getStyleAttribute $styles) + ' class="' + (nameToClass $shape.Name) + '">' | out-file $outFile -Append
 	foreach($p in $shape.TextFrame2.TextRange.Paragraphs()) {
-		$fontStyle = 'font-size: ' + $p.Font.Size + 'pt'
+		$styles = @()
+		if($FontStyle) {
+			$styles += 'font-size: ' + $p.Font.Size + 'pt'
+		}
 		if($p.Text -and $p.Text.Trim()) {
 			if($p.ParagraphFormat.Bullet.Visible) {
 				$margin = ($p.ParagraphFormat.IndentLevel - 1) * 20
-				('        <li style="margin-left:' + $margin + 'px;' + $fontStyle + '">' + $p.Text + '</li>') | out-file $outFile -Append
+                if($margin -gt 0) {
+                    $styles += ('margin-left:' + $margin + 'px')
+                }
+				('        <li' + (getStyleAttribute $styles) + '>' + $p.Text.TrimEnd() + '</li>') | out-file $outFile -Append
 			} else {
-				('        <p style="' + $fontStyle + '">' + $p.Text.TrimEnd() + '</p>') | out-file $outFile -Append
+				('        <p' + (getStyleAttribute $styles) + '>' + $p.Text.TrimEnd() + '</p>') | out-file $outFile -Append
 			} 
 		}
 		else {
-			'        <p style="' + $fontStyle + '">&nbsp;</p>' | out-file $outFile -Append
+			'        <p' + (getStyleAttribute $styles) + '>&nbsp;</p>' | out-file $outFile -Append
 		}
 	}
 	'    </div>' | out-file $outFile -Append
