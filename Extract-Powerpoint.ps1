@@ -1,8 +1,8 @@
 <# 
 .SYNOPSIS 
-    extract powerpoint
+    Extracts power point slides to impress js
 .DESCRIPTION 
-    Extracts power point slides to impress js using powershell
+    Supports font-size, syntax highlighing, positioning and css classes for theming
 .EXAMPLE
 	.\Extract-Powerpoint.ps1 'MyPresentation.pptx'
 .EXAMPLE
