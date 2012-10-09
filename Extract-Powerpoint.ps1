@@ -107,7 +107,7 @@ function renderTextShape($shape) {
                 if($margin -gt 0) {
                     $styles += ('margin-left:' + $margin + 'px')
                 }
-				('        <li' + (getStyleAttribute $styles) + '>' + $p.Text.TrimEnd() + '</li>') | out-file $outFile -Append
+				('        <li' + (getStyleAttribute $styles) + '>' + $p.Text + '</li>') | out-file $outFile -Append
 			} else {
 				('        <p' + (getStyleAttribute $styles) + '>' + $p.Text.TrimEnd() + '</p>') | out-file $outFile -Append
 			} 
