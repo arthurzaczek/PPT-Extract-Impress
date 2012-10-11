@@ -30,6 +30,9 @@ param(
 	[Parameter(HelpMessage="Extract each text frame without any bullet as source code")]
 	[switch]$SourceCode,
 	
+	[Parameter(HelpMessage="does not render the overview slide")]
+	[switch]$NoOverview,
+	
 	[Parameter(HelpMessage="Open the result when finished")]
 	[switch]$Open
 )
@@ -120,7 +123,9 @@ function renderFooter() {
         'SyntaxHighlighter.all();' | out-result
         '</script>' | out-result
     }
-	'<div id="overview" class="step" data-x="3000" data-y="1500" data-scale="10"/>' | out-result
+	if(!$NoOverview) {
+		'<div id="overview" class="step" data-x="3000" data-y="1500" data-scale="10"/>' | out-result
+	}
 	'</div>' | out-result
 	'<script src="content/impress.js"></script>' | out-result
 	'<script>impress().init();</script>' | out-result
