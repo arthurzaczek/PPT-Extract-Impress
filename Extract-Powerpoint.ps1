@@ -30,8 +30,17 @@ param(
 	[Parameter(HelpMessage="Extract each text frame without any bullet as source code")]
 	[switch]$SourceCode,
 	
-	[Parameter(HelpMessage="does not render the overview slide")]
+	[Parameter(HelpMessage="Does not render the overview slide")]
 	[switch]$NoOverview,
+	
+	[Parameter(HelpMessage="Column layout")]
+	[switch]$LayoutColumns,
+	[Parameter(HelpMessage="Horizontal layout (default)")]
+	[switch]$LayoutHorizontal,
+	[Parameter(HelpMessage="Vertical layout (default)")]
+	[switch]$LayoutVertical,
+	[Parameter(HelpMessage="Enables rotation during layout")]
+	[switch]$LayoutRotation,
 	
 	[Parameter(HelpMessage="Open the result when finished")]
 	[switch]$Open
@@ -51,6 +60,16 @@ if(!$Simple) {
 # ---------------- Init variables ------------------------------
 $file = resolve-path $file
 $outFile = [System.IO.Path]::GetFileNameWithoutExtension($file) + '.html'
+
+if($LayoutColumns) {
+	$posMode = "columns"
+} elseif($LayoutHorizontal) {
+	$posMode = "horizontal"
+} elseif($LayoutVertical) {
+	$posMode = "vertical"
+} else {
+	$posMode = "horizontal"
+}
 
 $xPos = 0
 $yPos = 0
@@ -189,6 +208,31 @@ function renderSlide($slide) {
     '</div>' | out-result
 }
 
+function updatePositions() {
+	switch($posMode) {
+		"columns" {
+			$script:xPos += $width + $gap
+			$script:col++
+			
+			if($col -ge $colCount) {
+				$script:xPos = 0
+				$script:col = 0
+				$script:yPos += $height + $gap
+			}
+			$script:zPos += $zGap
+		}
+		"horizontal" {
+			$script:xPos += $width + $gap
+			$script:zPos += $zGap
+		}
+		"vertical" {
+			$script:yPos += $height + $gap
+			$script:zPos += $zGap
+		}
+		default { "unknown position mode " + $posMode | out-host }
+	}
+}
+
 # ---------------- Main ------------------------------
 'Extracting "' + $file + '"' | out-host
 'to         "' + $outFile + '"' | out-host
@@ -197,22 +241,13 @@ renderHeader
 # init powerpoint
 Add-type -AssemblyName office
 $app = New-Object -ComObject powerpoint.application
+$app.visible = [Microsoft.Office.Core.MsoTriState]::msoTrue
 $presentation = $app.Presentations.open($file)
 
 foreach($slide in $presentation.Slides) {
     ("-> " + $slide.Name) | out-host
-
 	renderSlide $slide
-	
-    $xPos += $width + $gap
-    $zPos += $zGap
-    $col++
-    
-    if($col -ge $colCount) {
-        $xPos = 0
-        $col = 0
-        $yPos += $height + $gap
-    }
+	updatePositions
 }
 
 renderFooter
