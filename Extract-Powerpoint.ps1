@@ -73,8 +73,8 @@ function getStyleAttribute([string[]]$styles) {
 	return ' style="' + [string]::join(';', $styles) + '"'
 }
 
-function hasBullets($shape) {
-    foreach($p in $shape.TextFrame2.TextRange.Paragraphs()) {
+function hasBullets($paragraphs) {
+    foreach($p in $paragraphs) {
 	   if($p.ParagraphFormat.Bullet.Visible) {
             return $true; 
        }
@@ -82,8 +82,8 @@ function hasBullets($shape) {
     return $false;
 }
 
-function isSingleParagraph($shape) {
-    return $shape.TextFrame2.TextRange.Paragraphs().Count -le 1;
+function isSingleParagraph($paragraphs) {
+    return $paragraphs.Count -le 1;
 }
 
 function out-result {
@@ -128,8 +128,8 @@ function renderFooter() {
 	'</html>' | out-result
 }
 
-function renderParagraphs($shape) {
-	foreach($p in $shape.TextFrame2.TextRange.Paragraphs()) {
+function renderParagraphs($paragraphs) {
+	foreach($p in $paragraphs) {
 		$styles = @()
 		if($FontStyle) {
 			$styles += 'font-size: ' + $p.Font.Size + 'pt'
@@ -163,10 +163,11 @@ function renderTextShape($shape) {
         $styles += ('left:' + $shape.Left + 'px')
 	}
 	'    <div' + (getStyleAttribute $styles) + ' class="' + (nameToClass $shape.Name) + '">' | out-result
-    if($SourceCode -and !(hasBullets $shape) -and !(isSingleParagraph $shape)) {
+	$paragraphs = $shape.TextFrame2.TextRange.Paragraphs()
+    if($SourceCode -and !(hasBullets $paragraphs) -and !(isSingleParagraph $paragraphs)) {
         renderSourceCode $shape
     } else {
-        renderParagraphs $shape
+        renderParagraphs $paragraphs
     }
 	'    </div>' | out-result
 }
