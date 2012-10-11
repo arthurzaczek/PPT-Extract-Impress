@@ -83,6 +83,9 @@ $zGap = -50
 $colCount = 5
 $col = 0
 
+$rot = 0
+$rotDelta = 30
+
 # ---------------- helper functions ------------------------------
 function nameToClass($name) {
 	if(!$name) { return "" }
@@ -199,7 +202,7 @@ function renderTextShape($shape) {
 
 function renderSlide($slide) {
     '<!-- ' + $slide.Name + ' -->' | out-result
-    '<div class="step slide ' + (nameToClass $slide.CustomLayout.Name) + '" data-x="' + $xPos + '" data-y="' + $yPos + '" data-z="' + $zPos + '">' | out-result
+    '<div class="step slide ' + (nameToClass $slide.CustomLayout.Name) + '" data-x="' + $xPos + '" data-y="' + $yPos + '" data-z="' + $zPos + '" data-rotate="' + $rot + '">' | out-result
     foreach($shape in $slide.Shapes) {
         if($shape.HasTextFrame) {
 			renderTextShape $shape
@@ -230,6 +233,10 @@ function updatePositions() {
 			$script:zPos += $zGap
 		}
 		default { "unknown position mode " + $posMode | out-host }
+	}
+	
+	if($LayoutRotation) {
+		$script:rot += $rotDelta
 	}
 }
 
