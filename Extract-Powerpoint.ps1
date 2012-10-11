@@ -66,7 +66,8 @@ $col = 0
 
 # ---------------- helper functions ------------------------------
 function nameToClass($name) {
-	return $name.Replace(" ", "-")
+	if(!$name) { return "" }
+	return ($name -replace "\d","").Trim().Replace(" ", "-")
 }
 
 function getStyleAttribute([string[]]$styles) {
