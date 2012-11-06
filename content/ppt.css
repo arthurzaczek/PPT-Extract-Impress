@@ -7,28 +7,31 @@
 .Titelfolie 
 {
 	background: blue;
+	color: white;
 }
 
 .Abschnittsüberschrift 
 {
 	background: green;
+	color: white;
 }
 
 .Titel-und-Inhalt 
 {
 }
 
-.Titel
+.Titel, 
 .Title
 {
+	font-size: 80px;
 }
 
-.Inhaltsplatzhalter
+.Inhaltsplatzhalter,
 .Content-Placeholder
 {
 }
 
-.Rechteck
+.Rechteck,
 .Rectangle
 {
 }

@@ -126,6 +126,7 @@ function renderHeader() {
         '<link href="content/syntaxhighlighter/styles/shCore.css" rel="stylesheet" type="text/css" />' | out-result
         '<link href="content/syntaxhighlighter/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />' | out-result
     }
+	'<link href="content/custom.css" rel="stylesheet" />' | out-result
 	'<body class="impress-not-supported">' | out-result
 	'<div id="impress">' | out-result
 }
