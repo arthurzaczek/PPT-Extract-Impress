@@ -201,11 +201,26 @@ function renderTextShape($shape) {
 	'    </div>' | out-result
 }
 
+function renderPictureShape($shape) {
+	$styles = @()
+	if($Position) {
+		$styles += ('position: absolute')
+        $styles += ('top:' + $shape.Top + 'px')
+        $styles += ('left:' + $shape.Left + 'px')
+	}
+	$imgName =  ((Resolve-Path ".\").Path + "\" + $shape.Name + '.png')
+	"  Saving image to " +  $imgName | out-host
+	$shape.Export($imgName, 2)
+	'    <img src="' + $imgName + '" class="' + (nameToClass $shape.Name) + '">' | out-result
+}
+
 function renderSlide($slide) {
     '<!-- ' + $slide.Name + ' -->' | out-result
     '<div class="step slide ' + (nameToClass $slide.CustomLayout.Name) + '" data-x="' + $xPos + '" data-y="' + $yPos + '" data-z="' + $zPos + '" data-rotate="' + $rot + '">' | out-result
     foreach($shape in $slide.Shapes) {
-        if($shape.HasTextFrame) {
+		if($shape.Type -eq 13) { # msoPicture			
+			renderPictureShape $shape
+		} elseif($shape.HasTextFrame) {
 			renderTextShape $shape
         }
     }
