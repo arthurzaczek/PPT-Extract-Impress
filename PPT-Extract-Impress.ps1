@@ -4,9 +4,9 @@
 .DESCRIPTION 
     Supports font-size, syntax highlighing, positioning and css classes for theming
 .EXAMPLE
-	.\Extract-Powerpoint.ps1 'MyPresentation.pptx'
+	.\PPT-Extract-Impress.ps1 'MyPresentation.pptx'
 .EXAMPLE
-	ls *.pptx | % { .\Extract-Powerpoint.ps1 $_ }
+	ls *.pptx | % { .\PPT-Extract-Impress.ps1 $_ }
 .NOTES 
     Author     : Arthur Zaczek, arthur@dasz.at
 	License    : GNU General Public License (GPL)
@@ -47,7 +47,7 @@ param(
 )
 
 if(!$file) {
-	get-help .\Extract-Powerpoint.ps1 -Full
+	get-help .\PPT-Extract-Impress.ps1 -Full
 	exit 1
 }
 

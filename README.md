@@ -2,18 +2,17 @@ Extracts power point slides to impress js using powershell
 
 **ITS UNDER DEVELOPMENT!**
 
-	PS> Get-Help .\Extract-Powerpoint.ps1 -detailed
+	C:\PS> Get-Help .\PPT-Extract-Impress.ps1 -detailed
 
 	NAME
-		Extract-Powerpoint.ps1
+		PPT-Extract-Impress.ps1
 
 	SYNOPSIS
 		Extracts power point slides to impress js
 
 
 	SYNTAX
-		P:\Impress-Extract-Powerpoint\Extract-Powerpoint.ps1 [[-file] <String>] [-Simple] [-Position] [-FontStyle] [-Source
-		Code] [-Open] [<CommonParameters>]
+		PPT-Extract-Impress.ps1 [[-file] <String>] [-Simple] [-Position] [-FontStyle] [-SourceCode] [-Open] [<CommonParameters>]
 
 
 	DESCRIPTION
@@ -35,9 +34,9 @@ Extracts power point slides to impress js using powershell
 
 		-------------------------- EXAMPLE 1 --------------------------
 
-		C:\PS>.\Extract-Powerpoint.ps1 'MyPresentation.pptx'
+		C:\PS> .\PPT-Extract-Impress.ps1 'MyPresentation.pptx'
 
 
 		-------------------------- EXAMPLE 2 --------------------------
 
-		C:\PS>ls *.pptx | % { .\Extract-Powerpoint.ps1 $_ }
+		C:\PS> ls *.pptx | % { .\PPT-Extract-Impress.ps1 $_ }
